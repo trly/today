@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package today.v1;
+
+option go_package = "github.com/trly/today/gen/today/v1;todayv1";
+
+// HealthService reports server availability.
+//
+// Connect RPC path: /today.v1.HealthService/Health.
+service HealthService {
+  // Returns the current server health status. The server returns status "ok"
+  // when the API process is reachable.
+  rpc Health(HealthRequest) returns (HealthResponse) {}
+}
+
+// CalendarsService exposes configured calendar collections.
+//
+// Connect RPC path: /today.v1.CalendarsService/ListCalendars.
+service CalendarsService {
+  // Lists calendars available to the service. Calendars are sorted by display
+  // name. Backend calendar discovery failures return CodeUnavailable.
+  rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse) {}
+}
+
+// EventsService exposes calendar events.
+//
+// Connect RPC path: /today.v1.EventsService/ListEvents.
+service EventsService {
+  // Lists events for selected calendars on a local date. At least one calendar
+  // display name is required. Missing calendars or invalid dates return
+  // CodeInvalidArgument. Backend calendar fetch failures return CodeUnavailable.
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse) {}
+}
+
+// HealthRequest requests the server health status.
+message HealthRequest {}
+
+// HealthResponse describes server availability.
+message HealthResponse {
+  // Machine-readable health state.
+  string status = 1;
+}
+
+// ListCalendarsRequest requests all available calendars.
+message ListCalendarsRequest {}
+
+// ListCalendarsResponse contains available calendars.
+message ListCalendarsResponse {
+  // Calendars available to query.
+  repeated Calendar calendars = 1;
+}
+
+// ListEventsRequest selects calendars and date for an event query.
+message ListEventsRequest {
+  // Calendar display names to include. Names are trimmed and de-duplicated by
+  // the service. At least one non-empty calendar is required.
+  repeated string calendar = 1;
+  // Local date to query in YYYY-MM-DD form. Empty means today in the server's
+  // configured location. Values that do not parse as a real local date return
+  // CodeInvalidArgument.
+  string date = 2;
+}
+
+// Calendar describes one queryable calendar collection.
+message Calendar {
+  // Human-readable calendar display name.
+  string name = 1;
+  // Provider-supplied calendar description.
+  string description = 2;
+  // CalDAV collection path for diagnostics and stable identification.
+  string path = 3;
+  // Calendar color as supplied by the provider, usually a CSS hex color.
+  string color = 4;
+}
+
+// ListEventsResponse contains all-day and timed events for one date.
+message ListEventsResponse {
+  // Local date represented by this response in YYYY-MM-DD form.
+  string date = 1;
+  // All-day events active on date. Multi-day all-day events are included for
+  // each covered date. Sorted by priority, then title.
+  repeated AllDayEvent all_day_events = 2;
+  // Timed events whose local start date equals date. Sorted by start time, then
+  // priority, then title.
+  repeated TimedEvent events = 3;
+}
+
+// AllDayEvent describes one all-day event ready for display by the web UI.
+message AllDayEvent {
+  // Stable event identifier for keyed rendering.
+  string id = 1;
+  // Short display title.
+  string title = 2;
+  // Secondary label shown under the title. The service uses the calendar name.
+  string meta = 3;
+  // Full event description or notes, when available.
+  string description = 4;
+  // Calendar display name this event came from.
+  string calendar = 5;
+  // Calendar color this event came from, usually a CSS hex color.
+  string calendar_color = 6;
+  // iCalendar PRIORITY. 0 means unset; 1 is highest and 9 is lowest.
+  int32 priority = 7;
+  // Local start date in YYYY-MM-DD form.
+  string start_date = 8;
+  // Local end date in YYYY-MM-DD form. For all-day events this is exclusive.
+  string end_date = 9;
+}
+
+// TimedEvent describes one timed event ready for display by the web UI.
+message TimedEvent {
+  // Stable event identifier for keyed rendering.
+  string id = 1;
+  // Local display time, formatted for the agenda event label.
+  string time = 2;
+  // Short display title.
+  string title = 3;
+  // Notes shown under the title, when available.
+  string note = 4;
+  // Event start offset from local midnight, in minutes.
+  int32 start_minutes = 5;
+  // Event duration in minutes. Values are always at least 1.
+  int32 duration_minutes = 6;
+  // Calendar display name this event came from.
+  string calendar = 7;
+  // Calendar color this event came from, usually a CSS hex color.
+  string calendar_color = 8;
+  // iCalendar PRIORITY. 0 means unset; 1 is highest and 9 is lowest.
+  int32 priority = 9;
+}

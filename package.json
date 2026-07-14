@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "scripts": {
+    "generate": "buf generate",
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "check": "pnpm --filter web check"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "@bufbuild/protoc-gen-es": "^2.12.1"
+  }
+}

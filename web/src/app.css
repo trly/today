@@ -1,0 +1,117 @@
+* {
+	box-sizing: border-box;
+}
+
+:root {
+	--color-ink: oklch(30% 0.006 145deg);
+	--color-ink-strong: oklch(24% 0.018 145deg);
+	--color-ink-muted: oklch(40% 0.018 145deg);
+	--color-ink-soft: oklch(47% 0.018 145deg);
+	--color-ink-soft-disabled: oklch(47% 0.018 145deg / 0.46);
+	--color-paper: oklch(95% 0.004 145deg);
+	--color-surface: oklch(97.5% 0.006 145deg);
+	--color-surface-raised: oklch(99% 0.004 145deg);
+	--color-panel: oklch(92.5% 0.012 145deg);
+	--color-border: oklch(78% 0.018 145deg);
+	--color-border-soft: oklch(78% 0.018 145deg / 0.64);
+	--color-grid: oklch(54% 0.018 145deg / 0.18);
+	--color-moss: oklch(56% 0.078 145deg);
+	--color-moss-deep: oklch(39% 0.075 145deg);
+	--color-moss-deep-transparent: oklch(39% 0.075 145deg / 0);
+	--color-moss-soft: oklch(92% 0.035 145deg);
+	--color-moss-border-subtle: oklch(39% 0.075 145deg / 0.14);
+	--color-moss-border: oklch(39% 0.075 145deg / 0.22);
+	--color-moss-border-active: oklch(39% 0.075 145deg / 0.3);
+	--color-moss-border-hover: oklch(39% 0.075 145deg / 0.35);
+	--color-moss-border-today: oklch(39% 0.075 145deg / 0.48);
+	--color-moss-focus: oklch(39% 0.075 145deg / 0.34);
+	--color-focus-ring: oklch(35% 0.085 145deg);
+	--color-moss-scrollbar: oklch(39% 0.075 145deg / 0.28);
+	--color-moss-scrollbar-hover: oklch(39% 0.075 145deg / 0.42);
+	--color-moss-control-wash: oklch(91% 0.04 145deg / 0.56);
+	--color-error: oklch(58% 0.15 28deg);
+	--color-error-bg: oklch(95% 0.035 28deg);
+	--color-error-text: oklch(43% 0.14 28deg);
+	--color-error-border: oklch(77% 0.06 28deg);
+	--color-error-surface: oklch(96% 0.025 28deg);
+	--color-error-surface-text: oklch(36% 0.09 28deg);
+	--color-error-hover: oklch(92% 0.055 28deg);
+	--color-warning: oklch(65% 0.1 70deg);
+	--color-warning-bg: oklch(94% 0.035 70deg);
+	--color-warning-text: oklch(37% 0.075 70deg);
+	--color-warning-hover: oklch(91% 0.05 70deg);
+	--color-shadow: oklch(25% 0.02 145deg / 0.14);
+	--color-header-ink-muted: oklch(38% 0.028 145deg);
+	--color-header-rule: oklch(64% 0.04 145deg / 0.34);
+	--color-header-wash: oklch(91% 0.04 145deg / 0.42);
+	--color-header-surface-start: oklch(99% 0.006 145deg);
+	--color-header-surface-end: oklch(94.5% 0.018 145deg);
+	--color-date-mark-border: oklch(65% 0.035 145deg / 0.22);
+	--color-date-mark-background: oklch(97% 0.018 145deg / 0.48);
+	--font-ui: "Noto Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+		"Segoe UI", sans-serif;
+	--font-display: "Noto Serif Display", Georgia, "Times New Roman", serif;
+	--text-label: 0.75rem;
+	--text-caption: 0.875rem;
+	--text-body: 1rem;
+	--text-title: 1.125rem;
+	--text-display: 2.45rem;
+	--text-clock: 2.75rem;
+	--weight-heading: 760;
+	--leading-label: 1.15;
+	--leading-body: 1.48;
+	--leading-tight: 1.05;
+	--tracking-label: 0.105em;
+	--tracking-wide: 0.075em;
+	--tracking-tight: -0.035em;
+	--tracking-display: -0.055em;
+	--space-shell: clamp(0.75rem, 2.4vw, 1.5rem);
+	--space-panel: clamp(1rem, 2.2vw, 1.6rem);
+	--space-panel-block: clamp(1.1rem, 2.4vw, 1.8rem);
+	--space-panel-inline: clamp(1rem, 2.4vw, 1.7rem);
+	--space-mobile-inline: 0.75rem;
+	--radius-event: 0.9rem;
+	--radius-item: 0.95rem;
+	--radius-panel: clamp(1.2rem, 2vw, 1.65rem);
+	--radius-board: clamp(1.5rem, 3vw, 2.4rem);
+	--radius-pill: 999px;
+	--size-touch: 2.75rem;
+	--focus-ring: 2px solid var(--color-focus-ring);
+	--focus-offset: 3px;
+	--shadow-board: 0 2rem 5rem var(--color-shadow);
+	--shadow-event: 0 0.75rem 1.8rem var(--color-shadow);
+	--shadow-control: 0 0.2rem 0.5rem oklch(25% 0.02 145deg / 0.055);
+	--shadow-control-hover: 0 0.24rem 0.6rem oklch(25% 0.02 145deg / 0.07);
+	--shadow-control-active: 0 0.1rem 0.28rem oklch(25% 0.02 145deg / 0.06);
+	--duration-state: 170ms;
+	--duration-flip: 420ms;
+	--ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+	background: var(--color-paper);
+}
+
+body {
+	margin: 0;
+	min-width: 320px;
+	font-family: var(--font-ui);
+	font-size: 100%;
+	font-kerning: normal;
+	font-feature-settings:
+		"kern" 1,
+		"liga" 1;
+	color: var(--color-ink);
+	background: linear-gradient(135deg, var(--color-paper), var(--color-surface));
+}
+
+#app {
+	min-height: 100svh;
+}
+
+@media (max-width: 520px) {
+	:root {
+		--text-label: 0.875rem;
+		--text-caption: 0.9375rem;
+	}
+}
