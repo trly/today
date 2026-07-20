@@ -1,45 +1,73 @@
 # Today
 
-## Development
+A lightweight CalDAV viewer.
 
-Run the Go tests:
+Today is intended to be an easy way to display 1 or more CalDav calendars as a semi-interactive dashboard.
+
+## Quick Start
+
+### Environment Variables
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `CALDAV_URL` | **yes** | — | CalDAV server endpoint |
+| `CALDAV_USER` | no | — | HTTP basic-auth username |
+| `CALDAV_PASSWORD` | no | — | HTTP basic-auth password (requires user) |
+| `ADDR` | no | `:8080` | Listen address |
+
+### Docker
+
+Published to `ghcr.io/trly/today` on every `v*` tag:
 
 ```sh
+docker run --rm -p 8080:8080 \
+  -e CALDAV_URL=https://caldav.icloud.com \
+  -e CALDAV_USER=you@example.com \
+  -e CALDAV_PASSWORD=secret \
+  ghcr.io/trly/today:latest
+```
+
+### Docker Compose
+
+```yaml
+services:
+  today:
+    image: ghcr.io/trly/today:latest
+    ports:
+      - "8080:8080"
+    environment:
+      CALDAV_URL: https://caldav.icloud.com
+      CALDAV_USER: you@example.com
+      CALDAV_PASSWORD: secret
+```
+
+```sh
+docker compose up
+```
+
+## Local Development
+
+Requires Go 1.26+, Node 24+, and pnpm.
+
+```sh
+# run tests
 go test ./...
+
+# start the API server
+go run ./cmd/today --url https://caldav.icloud.com --user you@example.com --password secret
+
+# start the web dev server
+pnpm -C web dev
 ```
 
-Run a focused test or package:
+The web app (`web/`) runs on Vite (`:5173`); the Go server exposes the Connect RPC API on `:8080`. API requests are proxied via through vite during development.
 
-```sh
-go test ./internal/httpapi -run TestHealth
-```
+### API Code Generation
 
-Build the web app from the repository root:
-
-```sh
-pnpm build
-```
-
-Start the Vite development server:
-
-```sh
-pnpm dev
-```
-
-`pnpm dev` starts only the web app. Start the Go server separately when API access is needed:
-
-```sh
-go run ./cmd/today --url <caldav-url>
-```
-
-The server requires `--url` or `CALDAV_URL`. Basic authentication uses `--user`/`CALDAV_USER` and `--password`/`CALDAV_PASSWORD`; a password requires a user. The default address is `:8080`, configurable with `--addr` or `ADDR`.
-
-## API Code Generation
-
-After changing `protobuf/today/v1/today.proto`, regenerate the Go protobuf/Connect stubs, web TypeScript protobuf descriptors, and Markdown API documentation:
+After editing `protobuf/today/v1/today.proto`:
 
 ```sh
 buf generate
 ```
 
-This requires the `buf` CLI, the Go tool plugins, root Node dependencies for `protoc-gen-es`, and network access for the remote documentation plugin.
+Requires the `buf` CLI, Go protobuf plugins, and root Node dependencies.

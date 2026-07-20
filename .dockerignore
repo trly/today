@@ -1,0 +1,10 @@
+.git/
+.jj/
+.github/
+bin/
+node_modules/
+web/
+*.md
+.envrc
+Dockerfile
+.dockerignore
