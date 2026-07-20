@@ -1,5 +1,6 @@
 {
   "private": true,
+  "license": "MIT",
   "scripts": {
     "generate": "buf generate",
     "dev": "pnpm --filter web dev",
