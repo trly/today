@@ -15,7 +15,7 @@ COPY . .
 COPY --from=frontend /app/web/dist ./web/dist
 RUN CGO_ENABLED=0 go build -ldflags "-s -w" -o /today ./cmd/today
 
-FROM scratch
+FROM gcr.io/distroless/static-debian12
 COPY --from=builder /today /today
 LABEL org.opencontainers.image.licenses="MIT"
 EXPOSE 8080
