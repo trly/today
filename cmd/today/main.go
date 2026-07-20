@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/urfave/cli/v3"
@@ -14,6 +16,7 @@ import (
 	"github.com/trly/today/internal/caldav"
 	"github.com/trly/today/internal/events"
 	"github.com/trly/today/internal/httpapi"
+	"github.com/trly/today/web"
 )
 
 func main() {
@@ -66,7 +69,7 @@ func run(_ context.Context, cmd *cli.Command) error {
 	protocols.SetUnencryptedHTTP2(true)
 	server := &http.Server{
 		Addr:              cfg.Addr,
-		Handler:           httpapi.New(service),
+		Handler:           handler(service),
 		Protocols:         protocols,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
@@ -95,4 +98,33 @@ func configFromCommand(cmd *cli.Command) (config, error) {
 		return config{}, errors.New("--password requires --user")
 	}
 	return cfg, nil
+}
+
+func spaHandler() http.Handler {
+	fsys, err := fs.Sub(web.Static, "dist")
+	if err != nil {
+		return http.NotFoundHandler()
+	}
+	fileServer := http.FileServer(http.FS(fsys))
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path := strings.TrimPrefix(r.URL.Path, "/")
+		if path != "" {
+			if _, err := fs.Stat(fsys, path); err == nil {
+				fileServer.ServeHTTP(w, r)
+				return
+			}
+		}
+		r.URL.Path = "/"
+		fileServer.ServeHTTP(w, r)
+	})
+}
+
+func handler(service httpapi.Service) http.Handler {
+	api := httpapi.New(service)
+	frontend := spaHandler()
+	mux := http.NewServeMux()
+	mux.Handle("/today.v1.", api)
+	mux.Handle("/api-docs", api)
+	mux.Handle("/", frontend)
+	return mux
 }
