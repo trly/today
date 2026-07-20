@@ -123,8 +123,13 @@ func handler(service httpapi.Service) http.Handler {
 	api := httpapi.New(service)
 	frontend := spaHandler()
 	mux := http.NewServeMux()
-	mux.Handle("/today.v1.", api)
 	mux.Handle("/api-docs", api)
 	mux.Handle("/", frontend)
-	return mux
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/today.v1.") {
+			api.ServeHTTP(w, r)
+			return
+		}
+		mux.ServeHTTP(w, r)
+	})
 }
