@@ -133,6 +133,14 @@
 	};
 
 	let eventCountLabel = $derived(formatEventCount(positionedEvents.length));
+	let currentHour = $derived(currentTime.getHours());
+
+	$effect(() => {
+		if (isToday) {
+			void currentHour;
+			tick().then(scrollToCurrentHourTop);
+		}
+	});
 
 	const scrollToCurrentHourTop = () => {
 		if (!isToday || !timelineViewport) {
