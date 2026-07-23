@@ -1,7 +1,7 @@
 <script>
 	import { onMount, tick } from 'svelte';
 	import AgendaEvent from './AgendaEvent.svelte';
-	import { hourFormatter, timeFormatter } from './timeFormat.js';
+	import { hourFormatter } from './timeFormat.js';
 
 	let {
 		events = [],
@@ -25,7 +25,6 @@
 
 	const getEventEndMinutes = (event) => event.startMinutes + Math.max(1, event.durationMinutes);
 	const getCurrentHourStartMinutes = () => currentTime.getHours() * 60;
-	const formatCurrentTime = () => timeFormatter.format(currentTime);
 	const clampEventToDay = (event) => ({
 		...event,
 		startMinutes: Math.max(dayStartMinutes, event.startMinutes),
@@ -121,9 +120,6 @@
 			date.getMonth() === currentTime.getMonth() &&
 			date.getDate() === currentTime.getDate()
 	);
-	let currentMinutes = $derived(currentTime.getHours() * 60 + currentTime.getMinutes());
-	let currentTimeLabel = $derived(formatCurrentTime());
-	let currentTimeOffset = $derived((currentMinutes / 30) * halfHourRowHeight);
 	const formatEventCount = (count) => {
 		if (count === 0) {
 			return 'No timed events scheduled';
@@ -244,17 +240,6 @@
 			</div>
 
 			<div class="event-grid">
-				{#if isToday}
-					<div
-						class="now-marker"
-						aria-hidden="true"
-						style={`--now-offset: ${currentTimeOffset}px;`}
-					>
-						<span>Now {currentTimeLabel}</span>
-					</div>
-					<p class="sr-only">Current time is {currentTimeLabel}</p>
-				{/if}
-
 				{#if loading}
 					<p class="empty-state" aria-live="polite">{loadingLabel}</p>
 				{:else if error}
@@ -410,51 +395,6 @@
 		);
 	}
 
-	.now-marker {
-		position: absolute;
-		z-index: 3;
-		top: clamp(0rem, var(--now-offset), calc(100% - 1.4rem));
-		left: -0.42rem;
-		right: 0;
-		display: flex;
-		align-items: center;
-		gap: 0.55rem;
-		pointer-events: none;
-		transform: translateY(-50%);
-	}
-
-	.now-marker::before {
-		content: '';
-		width: 0.82rem;
-		aspect-ratio: 1;
-		border: 2px solid var(--color-surface-raised);
-		border-radius: var(--radius-pill);
-		background: var(--color-moss-deep);
-		box-shadow: var(--shadow-control-hover);
-	}
-
-	.now-marker::after {
-		content: '';
-		flex: 1;
-		height: 1px;
-		background: linear-gradient(90deg, var(--color-moss-deep), var(--color-moss-deep-transparent));
-	}
-
-	.now-marker span {
-		order: 3;
-		padding: 0.2rem 0.42rem;
-		border: 1px solid var(--color-moss-border);
-		border-radius: var(--radius-pill);
-		background: var(--color-surface-raised);
-		font-size: var(--text-label);
-		line-height: var(--leading-label);
-		font-weight: 800;
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		font-variant-numeric: tabular-nums;
-		color: var(--color-moss-deep);
-	}
-
 	.empty-state {
 		display: grid;
 		gap: 0.25rem;
@@ -548,10 +488,6 @@
 		.empty-state-action {
 			grid-template-columns: 1fr;
 			justify-items: start;
-		}
-
-		.now-marker {
-			display: none;
 		}
 	}
 </style>
