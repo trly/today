@@ -7,7 +7,7 @@
     "build": "pnpm --filter web build",
     "check": "pnpm --filter web check"
   },
-  "packageManager": "pnpm@11.15.1",
+  "packageManager": "pnpm@11.17.0",
   "devDependencies": {
     "@bufbuild/protoc-gen-es": "^2.12.1"
   }
